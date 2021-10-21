@@ -86,8 +86,6 @@ int main(int argc, char** argv) {
     ResourceLimits limits(argparse.get<int>("timeout"), argparse.get<int>("memout"));
     int verbose = argparse.get<int>("verbose");
 
-    std::cerr << "c Running: '" << toolname << " " << filename << std::endl;
-
     if (toolname == "gbdhash") {
         std::cout << gbd_hash_from_dimacs(filename.c_str()) << std::endl;
     } else if (toolname == "normalize") {
