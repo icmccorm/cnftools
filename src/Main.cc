@@ -18,6 +18,8 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
  **************************************************************************************************/
 
 #include <iostream>
+#include <iterator>
+#include <algorithm>
 #include <array>
 
 #include "lib/argparse/argparse.hpp"
@@ -37,10 +39,10 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
 int main(int argc, char** argv) {
     argparse::ArgumentParser argparse("CNF Tools");
 
-    argparse.add_argument("tool").help("Select Tool: solve, gbdhash, normalize, isp, extract, gates")
+    argparse.add_argument("tool").help("Select Tool: solve, gbdhash, normalize, isp, extract, gates, aux")
         .default_value("gbdhash")
         .action([](const std::string& value) {
-            static const std::vector<std::string> choices = { "solve", "gbdhash", "normalize", "isp", "extract", "gates" };
+            static const std::vector<std::string> choices = { "solve", "gbdhash", "normalize", "isp", "extract", "gates", "aux"};
             if (std::find(choices.begin(), choices.end(), value) != choices.end()) {
                 return value;
             }
@@ -115,6 +117,16 @@ int main(int argc, char** argv) {
         std::vector<std::string> names = GateStats::GateFeatureNames();
         for (unsigned i = 0; i < record.size(); i++) {
             std::cout << names[i] << "=" << record[i] << std::endl;
+        }
+    }else if(toolname == "aux"){
+        CNFFormula formula;
+        formula.readDimacsFromFile(filename.c_str());
+        std::set<Lit> all_gates;
+        GateStats stats(formula, limits);
+        stats.analyze(repeat, verbose);
+        std::set<unsigned int> gate_list = stats.GateList();
+        for(std::__1::set<unsigned int>::iterator it = gate_list.begin(); it != gate_list.end(); it++){
+            std::cout << *it << std::endl;
         }
     }
 

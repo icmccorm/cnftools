@@ -39,7 +39,7 @@ class GateStats {
     const CNFFormula& formula_;
     const ResourceLimits& limits_;
     std::vector<float> record;
-
+    std::set<unsigned int> gate_list; 
  public:
     unsigned n_vars, n_gates, n_roots;
     unsigned n_none, n_generic, n_mono, n_and, n_or, n_triv, n_equiv, n_full;
@@ -82,30 +82,37 @@ class GateStats {
                     break;
                 case GENERIC:  // generically recognized gate
                     ++n_generic;
+                    gate_list.insert(i);
                     levels_generic.push_back(levels[i]);
                     break;
                 case MONO:  // monotonically nested gate
                     ++n_mono;
+                    gate_list.insert(i);
                     levels_mono.push_back(levels[i]);
                     break;
                 case AND:  // non-monotonically nested and-gate
                     ++n_and;
+                    gate_list.insert(i);
                     levels_and.push_back(levels[i]);
                     break;
                 case OR:  // non-monotonically nested or-gate
                     ++n_or;
+                    gate_list.insert(i);
                     levels_or.push_back(levels[i]);
                     break;
                 case TRIV:  // non-monotonically nested trivial equivalence gate
                     ++n_triv;
+                    gate_list.insert(i);
                     levels_triv.push_back(levels[i]);
                     break;
                 case EQIV:  // non-monotonically nested equiv- or xor-gate
                     ++n_equiv;
+                    gate_list.insert(i);
                     levels_equiv.push_back(levels[i]);
                     break;
                 case FULL:  // non-monotonically nested full gate (=maxterm encoding) with more than two inputs
                     ++n_full;
+                    gate_list.insert(i);
                     levels_full.push_back(levels[i]);
                     break;
             }
@@ -137,6 +144,10 @@ class GateStats {
     // Gate Structural Features
     std::vector<float> GateFeatures() {
         return record;
+    }
+
+    std::set<unsigned int> GateList(){
+        return gate_list;
     }
 
     static std::vector<std::string> GateFeatureNames() {
